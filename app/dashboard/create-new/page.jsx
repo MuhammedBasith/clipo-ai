@@ -12,6 +12,7 @@ import { VideoDataContext } from '@/app/_context/VideoDataContext'
 import { db } from '@/configs/db'
 import { VideoData } from '@/configs/schema'
 import { useUser } from '@clerk/nextjs'
+import PlayerDialog from '../_components/PlayerDialog'
 
 function Page() {
   const [loading, setLoading] = useState(false)
@@ -20,6 +21,9 @@ function Page() {
   const [audioFileURL, setAudioFileURL] = useState(null)
   const [captions, setCaptions] = useState(null)
   const [imageList, setImageList] = useState([])
+  const [playVideo, setPlayVideo] = useState(false)
+  const [videoId, setVideoId] = useState()
+
   const { videoData, setVideoData } = useContext(VideoDataContext)
 
   const { user } = useUser()
@@ -135,6 +139,8 @@ function Page() {
       createdBy: user?.primaryEmailAddress?.emailAddress
     }).returning({id: VideoData?.id})
 
+    setVideoId(result[0].id)
+    setPlayVideo(true)
     console.log(result);
     
     setLoading(false)
@@ -154,8 +160,11 @@ function Page() {
       </div>
 
       <CustomLoading loading={loading} />
+
+      <PlayerDialog playVideo={playVideo} videoId={videoId} />
     </div>
   )
 }
+
 
 export default Page
