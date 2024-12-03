@@ -5,7 +5,6 @@ import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
 import fs from 'fs';
 import { NextResponse } from 'next/server';
 import path from 'path';
-import { useState } from 'react';
 
 // Configure AWS Polly
 AWS.config.update({

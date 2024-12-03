@@ -15,6 +15,7 @@ function page() {
   const [formData, setFormData] = useState([])
   const [videoScript, setVideoScript] = useState()
   const [audioFileURL, setAudioFileURL] = useState()
+  const [captions, setCaptions] = useState()
 
   const onHandleInputChange = (fieldName, fieldValue) => {
     console.log(fieldName, fieldValue);
@@ -34,11 +35,14 @@ function page() {
     }).then((response) => {
       setVideoScript(response.data.result)
       GenerateAudioFile(response.data.result)
+      GenerateAudioCaption(audioFileURL)
     })
     setLoading(false)
   }
 
   const GenerateAudioFile = async (videoScriptData) => {
+    setLoading(true)
+
     let script = ''
     const id = uuidv4()
     videoScriptData.forEach(item => {
@@ -52,6 +56,21 @@ function page() {
       setAudioFileURL(response.data.result)      
     })
     
+    setLoading(false)
+
+  }
+
+  const GenerateAudioCaption = async (audioFileURL) => {
+    setLoading(true)
+
+    await axios.post('/api/generate-caption', {
+      audioUrl: audioFileURL
+    }).then((response) => {
+      console.log(response.data.result)
+      setCaptions(response.data.result)
+    })
+
+    setLoading(false)
   }
 
   const onCreateClickHandler = () => {
