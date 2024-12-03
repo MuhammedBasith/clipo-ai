@@ -7,12 +7,14 @@ import SelectDuration from './_components/SelectDuration'
 import { Button } from '@/components/ui/button'
 import axios from 'axios'
 import CustomLoading from './_components/CustomLoading'
+import { v4 as uuidv4 } from 'uuid';
 
 function page() {
 
   const [loading, setLoading] = useState()
   const [formData, setFormData] = useState([])
   const [videoScript, setVideoScript] = useState()
+  const [audioFileURL, setAudioFileURL] = useState()
 
   const onHandleInputChange = (fieldName, fieldValue) => {
     console.log(fieldName, fieldValue);
@@ -30,17 +32,33 @@ function page() {
     const result = await axios.post('/api/get-video-script', {
       prompt: prompt
     }).then((response) => {
-      console.log(response.data.result);
       setVideoScript(response.data.result)
+      GenerateAudioFile(response.data.result)
     })
     setLoading(false)
+  }
+
+  const GenerateAudioFile = async (videoScriptData) => {
+    let script = ''
+    const id = uuidv4()
+    videoScriptData.forEach(item => {
+      script = script + item.ContentText + " "
+    });
+
+    await axios.post('/api/generate-audio', {
+      text: script,
+      id
+    }).then((response) => {
+      setAudioFileURL(response.data.result)      
+    })
+    
   }
 
   const onCreateClickHandler = () => {
     GetVideoScript()
   }
   
-
+  
   return (
     <div>
       <h2 className='font-bold text-4xl text-primary text-center'>Create New</h2>
