@@ -13,6 +13,7 @@ import { db } from '@/configs/db'
 import { VideoData } from '@/configs/schema'
 import { useUser } from '@clerk/nextjs'
 import PlayerDialog from '../_components/PlayerDialog'
+import { useRouter } from 'next/navigation'
 
 function Page() {
   const [loading, setLoading] = useState(false)
