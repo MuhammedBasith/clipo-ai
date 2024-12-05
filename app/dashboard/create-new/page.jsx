@@ -14,6 +14,7 @@ import { VideoData } from '@/configs/schema'
 import { useUser } from '@clerk/nextjs'
 import PlayerDialog from '../_components/PlayerDialog'
 import { useRouter } from 'next/navigation'
+import { UserDetailContext } from '@/app/_context/UserDetailContext'
 
 function Page() {
   const [loading, setLoading] = useState(false)
@@ -25,6 +26,7 @@ function Page() {
   const [playVideo, setPlayVideo] = useState(false)
   const [videoId, setVideoId] = useState()
 
+  const {userDetail, setuserDetail} = useContext(UserDetailContext)
   const { videoData, setVideoData } = useContext(VideoDataContext)
 
   const { user } = useUser()
@@ -118,6 +120,10 @@ function Page() {
   }
 
   const onCreateClickHandler = () => {
+    if(!userDetail?.credits >= 0){
+      toast("You don’t have Enough Credits. 🥲")
+      return
+    }
     GetVideoScript()
   }
 
