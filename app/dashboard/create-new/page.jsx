@@ -10,11 +10,12 @@ import CustomLoading from './_components/CustomLoading'
 import { v4 as uuidv4 } from 'uuid'
 import { VideoDataContext } from '@/app/_context/VideoDataContext'
 import { db } from '@/configs/db'
-import { VideoData } from '@/configs/schema'
+import { Users, VideoData } from '@/configs/schema'
 import { useUser } from '@clerk/nextjs'
 import PlayerDialog from '../_components/PlayerDialog'
 import { useRouter } from 'next/navigation'
 import { UserDetailContext } from '@/app/_context/UserDetailContext'
+import { eq } from 'drizzle-orm'
 
 function Page() {
   const [loading, setLoading] = useState(false)
@@ -146,12 +147,26 @@ function Page() {
       createdBy: user?.primaryEmailAddress?.emailAddress
     }).returning({id: VideoData?.id})
 
+    await UpdateUserCredits();
+
     setVideoId(result[0].id)
     setPlayVideo(true)
     console.log(result);
     
     setLoading(false)
 
+  }
+
+  const UpdateUserCredits = async() => {
+    const result = await db.update(Users).set({
+      credits: userDetail?.credits - 10
+    }).where(eq(Users?.email, user?.primaryEmailAddress?.emailAddress))
+    setuserDetail(prev => ({
+      ...prev,
+      "credits": userDetail?.credits - 10
+    }))
+
+    setVideoData(null)
   }
 
   return (
